@@ -306,14 +306,16 @@ namespace QRdecomposition
                 H = MatrixScalarMultiplicationAndDivision(H, 2, '*');
               
                 H = AdditionMatrix(IdentityMatrix, H, '-');
-               
+                H1 = H;
+                break;
+
                 Rmatrix = MatrixMultiplication(H, Rmatrix);
-                
                 Qmatrix = MatrixMultiplication(Qmatrix, H);
                 Console.WriteLine();
             }
+            
             double[,] m = new double[size, size];
-            m = MatrixMultiplication(Qmatrix, Rmatrix);
+            m = MatrixMultiplication(H1, Amatrix);
             for (int i = 0; i < size; i++)
             {
                 for (int j = 0; j < size; j++)
@@ -323,7 +325,8 @@ namespace QRdecomposition
                 Console.WriteLine();
             }
             Console.WriteLine();
-           
+            Console.WriteLine();
+
 
         }
         public double[] HouseholderVector(double[] column, int iteration)

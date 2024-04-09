@@ -1,0 +1,7 @@
+C:\study\QR-decomposition\ConsoleApp1\ConsoleApp1\bin\Debug\ConsoleApp1.exe.config
+C:\study\QR-decomposition\ConsoleApp1\ConsoleApp1\bin\Debug\ConsoleApp1.exe
+C:\study\QR-decomposition\ConsoleApp1\ConsoleApp1\bin\Debug\ConsoleApp1.pdb
+C:\study\QR-decomposition\ConsoleApp1\ConsoleApp1\obj\Debug\ConsoleApp1.csproj.AssemblyReference.cache
+C:\study\QR-decomposition\ConsoleApp1\ConsoleApp1\obj\Debug\ConsoleApp1.csproj.CoreCompileInputs.cache
+C:\study\QR-decomposition\ConsoleApp1\ConsoleApp1\obj\Debug\ConsoleApp1.exe
+C:\study\QR-decomposition\ConsoleApp1\ConsoleApp1\obj\Debug\ConsoleApp1.pdb
