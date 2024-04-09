@@ -1,0 +1,7 @@
+C:\study\QR-decomposition\QRdecomposition\QRdecomposition\bin\Debug\QRdecomposition.exe.config
+C:\study\QR-decomposition\QRdecomposition\QRdecomposition\bin\Debug\QRdecomposition.exe
+C:\study\QR-decomposition\QRdecomposition\QRdecomposition\bin\Debug\QRdecomposition.pdb
+C:\study\QR-decomposition\QRdecomposition\QRdecomposition\obj\Debug\QRdecomposition.csproj.AssemblyReference.cache
+C:\study\QR-decomposition\QRdecomposition\QRdecomposition\obj\Debug\QRdecomposition.csproj.CoreCompileInputs.cache
+C:\study\QR-decomposition\QRdecomposition\QRdecomposition\obj\Debug\QRdecomposition.exe
+C:\study\QR-decomposition\QRdecomposition\QRdecomposition\obj\Debug\QRdecomposition.pdb
