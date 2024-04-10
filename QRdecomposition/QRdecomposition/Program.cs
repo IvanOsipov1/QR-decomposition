@@ -13,7 +13,7 @@ namespace QRdecomposition
 {
     public interface IMatrixPrinter
     {
-        void PrintMatrix<T>(T[,] array);
+        void PrintMatrix(double[,] array);
     }
     abstract class Matrix
     {
@@ -234,12 +234,13 @@ namespace QRdecomposition
         private double[,] Amatrix;
         private double[,] Free;
         private double[,] Qmatrix;
-        private double[,] Rmatrix;
-       
+        private double[,] Rmatrix;  
+
         private double determinant;
         int size;
+        int round;
 
-        public SLAE(MainMatrix matrix, FreeMatrix freeMembers)
+        public SLAE(MainMatrix matrix, FreeMatrix freeMembers, int round)
         {
             Amatrix = matrix.GetMatrix();
             Free = freeMembers.GetMatrix();
@@ -256,9 +257,9 @@ namespace QRdecomposition
                     Rmatrix[i, j] = Amatrix[i, j];
                 }
             }
-            
+            this.round = round;
         }
-        public void PrintMatrix<T>(T[,] array)
+        public void PrintMatrix(double[,] array)
         {
             for (int i = 0; i < size; i++)
             {
@@ -269,7 +270,7 @@ namespace QRdecomposition
 
                 for (int j = 0; j < size; j++)
                 {
-                    Console.Write(array[i, j] + " ");
+                    Console.Write(Math.Round(array[i, j], round) + " ");
                 }
             }
         }
@@ -283,16 +284,21 @@ namespace QRdecomposition
             double[,] H1 = new double[size, size];
             double[,] IdentityMatrix = new double[size, size];
             IdentityMatrix = CreateIdentityMatrix(size);
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < size - 1; i++)
             {
                 for (int j = 0; j < size; j++)
                 {
-                    colA[j] = Amatrix[j, i];
+                    colA[j] = Rmatrix[j, i];
                     //Console.Write(colA[i] + " ");
+                }
+                for (int j = 0; j < i; j++)
+                {
+                    colA[j] = 0;
+                    //Console.Write(colA[j] + " ");
                 }
                 for (int j = 0; j < size; j++)
                 {
-                    //Console.Write(colA[j] + " ");
+                   // Console.Write(colA[j] + " ");
                 }
                 hhvector = HouseholderVector(colA, i);
                 Console.WriteLine();
@@ -306,26 +312,22 @@ namespace QRdecomposition
                 H = MatrixScalarMultiplicationAndDivision(H, 2, '*');
               
                 H = AdditionMatrix(IdentityMatrix, H, '-');
-                H1 = H;
-                break;
-
+               
                 Rmatrix = MatrixMultiplication(H, Rmatrix);
-                Qmatrix = MatrixMultiplication(Qmatrix, H);
-                Console.WriteLine();
+                //PrintMatrix(Rmatrix);
+                Qmatrix = MatrixMultiplication(Qmatrix,H);
+                
             }
             
             double[,] m = new double[size, size];
-            m = MatrixMultiplication(H1, Amatrix);
-            for (int i = 0; i < size; i++)
-            {
-                for (int j = 0; j < size; j++)
-                {
-                    Console.Write(m[i, j] + "  ");
-                }
-                Console.WriteLine();
-            }
+            m = MatrixMultiplication(Qmatrix, Rmatrix);
+            PrintMatrix(Qmatrix);
             Console.WriteLine();
             Console.WriteLine();
+            PrintMatrix(Rmatrix);
+            Console.WriteLine();
+            Console.WriteLine();
+            PrintMatrix(m);
 
 
         }
@@ -561,6 +563,8 @@ namespace QRdecomposition
            
             int choice1;
             int choice2;
+            int choice3;
+            int roundNumber = 3;
 
             MainMatrix matrix1 = new MainMatrix();
             Console.WriteLine();
@@ -597,8 +601,25 @@ namespace QRdecomposition
 
             matrix2.printMatrix();
 
-
-            SLAE slae = new SLAE(matrix1, matrix2);
+            Console.WriteLine("Выберите предложенный вариант - введите соответствующее варианту число ");
+            Console.WriteLine("1. Ввести количество знаков после запятой вручную");
+            Console.WriteLine("2. Использовать округление до 3-х знаков после запятой.");
+            Console.WriteLine("3. Вывести значения Q и R матрицы полностью. ");
+            choice3 = Convert.ToInt32(Console.ReadLine());
+            if (choice3 == 1)
+            {
+                Console.WriteLine("Введите количество знаков после запятой для элементов Q и R матриц");
+                roundNumber = Convert.ToInt32(Console.ReadLine());
+            }
+            if (choice3 == 2)
+            {
+                roundNumber = 3;
+            }
+            if (choice3 == 3)
+            {
+                roundNumber = 14;
+            }
+            SLAE slae = new SLAE(matrix1, matrix2, roundNumber);
             slae.QRdecomposition();
            
         }
