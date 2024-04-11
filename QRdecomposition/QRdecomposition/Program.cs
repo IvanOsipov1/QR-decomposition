@@ -232,7 +232,7 @@ namespace QRdecomposition
         FreeMatrix freeMembers = new FreeMatrix();
 
         private double[,] Amatrix;
-        private double[,] Free;
+        private double[] Free;
         private double[,] Qmatrix;
         private double[,] Rmatrix;  
 
@@ -242,14 +242,17 @@ namespace QRdecomposition
 
         public SLAE(MainMatrix matrix, FreeMatrix freeMembers, int round)
         {
+
             Amatrix = matrix.GetMatrix();
-            Free = freeMembers.GetMatrix();
             this.mainMatrix = matrix;
             this.freeMembers = freeMembers;
             Qmatrix = new double[mainMatrix.sizeMatrix, mainMatrix.sizeMatrix];
             Rmatrix = new double[mainMatrix.sizeMatrix, mainMatrix.sizeMatrix];
             size = mainMatrix.GetSizeMatrix();
             Qmatrix = CreateIdentityMatrix(size);
+            this.Free = new double[size];
+            double[,] Free = new double[size, 1];
+            Free = freeMembers.GetMatrix();
             for (int i = 0; i < size; i++)
             {
                 for (int j = 0; j < size; j++)
@@ -258,6 +261,13 @@ namespace QRdecomposition
                 }
             }
             this.round = round;
+            for (int i = 0; i < size; i++)
+            {
+                this.Free[i] = Free[i, 0];
+            }
+           
+
+
         }
         public void PrintMatrix(double[,] array)
         {
@@ -365,6 +375,34 @@ namespace QRdecomposition
                 //Console.WriteLine("w == " + w[i]);
             }
             return w;
+        }
+        public void SLAESolution()
+        {
+            double[] Xvalues = new double[size]; // находим решение системы Rx = QTb
+            double[] QTb = new double[size];
+            QTb = MatrixMultiplication(Transpose(Qmatrix), Free);
+            double sum = 0;
+            for (int i = 0; i < size; i++)
+            {
+                sum = 0;
+                for (int j = 0; j < size; j++)
+                {
+                    if (i != j)
+                    {
+                        sum = sum + Rmatrix[size - i - 1, size - j - 1] * Xvalues[size - j - 1];
+                    }
+
+                }
+                Xvalues[size - i - 1] = (QTb[size - i - 1] - sum) / Rmatrix[size - i - 1, size - i - 1];
+
+            }
+            Console.WriteLine();
+            for (int i = 0; i < size; i++)
+            {
+                Console.WriteLine("X" + (i + 1) + " = " + Xvalues[i]);
+            }
+
+
         }
         public double[,] MatrixMultiplication(double[,] A, double[,] B)
         {
@@ -554,6 +592,24 @@ namespace QRdecomposition
             }
             return E;
         }
+        public double[] MatrixMultiplication(double[,] A, double[] B)
+        {
+            int m = A.GetLength(0); // Количество строк в матрице A
+            int n = A.GetLength(1); // Количество столбцов в матрице A
+            int vectorLength = B.Length; // Длина вектора-столбца x
+
+            double[] result = new double[m];
+            for (int i = 0; i < m; i++)
+            {
+                double sum = 0;
+                for (int j = 0; j < n; j++)
+                {
+                    sum += A[i, j] * B[j];
+                }
+                result[i] = sum;
+            }
+            return result;
+        }
     }
     internal class Program
     {
@@ -621,6 +677,7 @@ namespace QRdecomposition
             }
             SLAE slae = new SLAE(matrix1, matrix2, roundNumber);
             slae.QRdecomposition();
+            slae.SLAESolution();
            
         }
     }

@@ -5,3 +5,11 @@ C:\study\QR-decomposition\QRdecomposition\QRdecomposition\obj\Debug\QRdecomposit
 C:\study\QR-decomposition\QRdecomposition\QRdecomposition\obj\Debug\QRdecomposition.csproj.CoreCompileInputs.cache
 C:\study\QR-decomposition\QRdecomposition\QRdecomposition\obj\Debug\QRdecomposition.exe
 C:\study\QR-decomposition\QRdecomposition\QRdecomposition\obj\Debug\QRdecomposition.pdb
+E:\MyJob\study\QR-decomposition\QRdecomposition\QRdecomposition\bin\Debug\QRdecomposition.exe.config
+E:\MyJob\study\QR-decomposition\QRdecomposition\QRdecomposition\bin\Debug\QRdecomposition.exe
+E:\MyJob\study\QR-decomposition\QRdecomposition\QRdecomposition\bin\Debug\QRdecomposition.pdb
+E:\MyJob\study\QR-decomposition\QRdecomposition\QRdecomposition\obj\Debug\QRdecomposition.csproj.AssemblyReference.cache
+E:\MyJob\study\QR-decomposition\QRdecomposition\QRdecomposition\obj\Debug\QRdecomposition.csproj.SuggestedBindingRedirects.cache
+E:\MyJob\study\QR-decomposition\QRdecomposition\QRdecomposition\obj\Debug\QRdecomposition.csproj.CoreCompileInputs.cache
+E:\MyJob\study\QR-decomposition\QRdecomposition\QRdecomposition\obj\Debug\QRdecomposition.exe
+E:\MyJob\study\QR-decomposition\QRdecomposition\QRdecomposition\obj\Debug\QRdecomposition.pdb
