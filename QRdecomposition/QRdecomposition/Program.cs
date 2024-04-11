@@ -230,11 +230,14 @@ namespace QRdecomposition
 
         MainMatrix mainMatrix = new MainMatrix();
         FreeMatrix freeMembers = new FreeMatrix();
+        
 
         private double[,] Amatrix;
         private double[] Free;
         private double[,] Qmatrix;
-        private double[,] Rmatrix;  
+        private double[,] Rmatrix;
+
+        private MatrixComputingOperations operations = new MatrixComputingOperations();
 
         private double determinant;
         int size;
@@ -249,7 +252,7 @@ namespace QRdecomposition
             Qmatrix = new double[mainMatrix.sizeMatrix, mainMatrix.sizeMatrix];
             Rmatrix = new double[mainMatrix.sizeMatrix, mainMatrix.sizeMatrix];
             size = mainMatrix.GetSizeMatrix();
-            Qmatrix = CreateIdentityMatrix(size);
+            Qmatrix = operations.CreateIdentityMatrix(size);
             this.Free = new double[size];
             double[,] Free = new double[size, 1];
             Free = freeMembers.GetMatrix();
@@ -291,62 +294,56 @@ namespace QRdecomposition
             double[] colA = new double[size];
             double[] hhvector = new double[size];
             double[,] H = new double[size, size];
-            double[,] H1 = new double[size, size];
             double[,] IdentityMatrix = new double[size, size];
-            IdentityMatrix = CreateIdentityMatrix(size);
+            IdentityMatrix = operations.CreateIdentityMatrix(size);
             for (int i = 0; i < size - 1; i++)
             {
                 for (int j = 0; j < size; j++)
                 {
                     colA[j] = Rmatrix[j, i];
-                    //Console.Write(colA[i] + " ");
                 }
                 for (int j = 0; j < i; j++)
                 {
                     colA[j] = 0;
-                    //Console.Write(colA[j] + " ");
                 }
-                for (int j = 0; j < size; j++)
-                {
-                   // Console.Write(colA[j] + " ");
-                }
+                
                 hhvector = HouseholderVector(colA, i);
                 Console.WriteLine();
-                for (int j = 0; j < size; j++)
-                {
-                    //Console.WriteLine(hhvector[j]);
-                }
-
-                H = MatrixMultiplication(hhvector, hhvector);
-                
-                H = MatrixScalarMultiplicationAndDivision(H, 2, '*');
-              
-                H = AdditionMatrix(IdentityMatrix, H, '-');
                
-                Rmatrix = MatrixMultiplication(H, Rmatrix);
-                //PrintMatrix(Rmatrix);
-                Qmatrix = MatrixMultiplication(Qmatrix,H);
+                H = operations.MatrixMultiplication(hhvector, hhvector);
+                
+                H = operations.MatrixScalarMultiplicationAndDivision(H, 2, '*');
+              
+                H = operations.AdditionMatrix(IdentityMatrix, H, '-');
+               
+                Rmatrix = operations.MatrixMultiplication(H, Rmatrix);
+   
+                Qmatrix = operations.MatrixMultiplication(Qmatrix,H);
                 
             }
             
-            double[,] m = new double[size, size];
-            m = MatrixMultiplication(Qmatrix, Rmatrix);
+            double[,] QxR = new double[size, size];
+            QxR = operations.MatrixMultiplication(Qmatrix, Rmatrix);
+            Console.WriteLine("Matrix Q:");
             PrintMatrix(Qmatrix);
             Console.WriteLine();
             Console.WriteLine();
+            Console.WriteLine("Matrix R:");
             PrintMatrix(Rmatrix);
             Console.WriteLine();
             Console.WriteLine();
-            PrintMatrix(m);
+            Console.WriteLine("Multiplication Q x R");
+            PrintMatrix(QxR);
+            Console.WriteLine();
 
 
         }
-        public double[] HouseholderVector(double[] column, int iteration)
+        private double[] HouseholderVector(double[] column, int iteration)
         {
             int SizeVector = column.GetLength(0);
             double[,] E = new double[SizeVector, SizeVector]; // создаем единичную матрицу
             double[] w = new double[SizeVector];
-            E = CreateIdentityMatrix(SizeVector);
+            E = operations.CreateIdentityMatrix(SizeVector);
             double[] Ecol = new double[SizeVector];
             for (int i = 0; i < SizeVector; i++)
             {
@@ -357,19 +354,19 @@ namespace QRdecomposition
                 //Console.Write(column[i] + " ");
             }
             //double[] HouseholderVector = new double[SizeVector];
-            w = MatrixScalarMultiplicationAndDivision(Ecol, NormVector(column), '*');
+            w = operations.MatrixScalarMultiplicationAndDivision(Ecol, operations.NormVector(column), '*');
             for (int i = 0; i < column.GetLength(0); i++)
             {
                 //Console.WriteLine("w = " + w[i]);
             }
-            w = AdditionMatrix(column, w, '-');
+            w = operations.AdditionMatrix(column, w, '-');
             //Console.WriteLine("w = " + NormVector(w));
             for (int i = 0; i < w.GetLength(0); i++)
             {
                //Console.WriteLine("w == " + w[i]);
             }
             //Console.WriteLine("norm " + NormVector(w));
-            w = MatrixScalarMultiplicationAndDivision(w, NormVector(w), '/');
+            w = operations.MatrixScalarMultiplicationAndDivision(w, operations.NormVector(w), '/');
             for (int i = 0; i < w.GetLength(0); i++)
             {
                 //Console.WriteLine("w == " + w[i]);
@@ -380,7 +377,7 @@ namespace QRdecomposition
         {
             double[] Xvalues = new double[size]; // находим решение системы Rx = QTb
             double[] QTb = new double[size];
-            QTb = MatrixMultiplication(Transpose(Qmatrix), Free);
+            QTb = operations.MatrixMultiplication(operations.Transpose(Qmatrix), Free);
             double sum = 0;
             for (int i = 0; i < size; i++)
             {
@@ -404,6 +401,21 @@ namespace QRdecomposition
 
 
         }
+        public void determinantCalculation()
+        {
+            double RmatrixDeterminant = 1;
+            for (int i = 0; i < size; i++)
+            {
+                RmatrixDeterminant *= Rmatrix[i, i];
+            }
+            determinant = RmatrixDeterminant;
+            Console.WriteLine(determinant);
+        }
+        
+    }
+
+    class MatrixComputingOperations
+    {
         public double[,] MatrixMultiplication(double[,] A, double[,] B)
         {
             int rowsA = A.GetLength(0);
@@ -440,14 +452,16 @@ namespace QRdecomposition
                 if (OperationType == '*')
                 {
                     VectorC[i] = Vector[i] * C;
-                }else if (OperationType == '/'){
+                }
+                else if (OperationType == '/')
+                {
                     VectorC[i] = Vector[i] / C;
                 }
                 else
                 {
                     throw new InvalidOperationException("Метод поеддерживает только операции умножения и деления");
                 }
-                
+
             }
             return VectorC;
         }
@@ -456,19 +470,19 @@ namespace QRdecomposition
             int rowsA = A.GetLength(0);
 
             int rowsB = B.GetLength(0);
-            
+
             if (rowsA != rowsB)
             {
                 throw new InvalidOperationException("Векторы имеют разные размерности.");
             }
 
             double[] AsumB = new double[rowsA];
-            
+
             for (int i = 0; i < rowsA; i++)
             {
                 if (OperationType == '+')
                 {
-                    
+
                     AsumB[i] = A[i] + B[i];
                 }
                 else if (OperationType == '-')
@@ -497,7 +511,7 @@ namespace QRdecomposition
         }
         public double[,] Transpose(double[,] A)
         {
-            
+
             int rows = A.GetLength(0);
             int cols = A.GetLength(1);
             double[,] TransposeMatrix = new double[rows, cols];
@@ -534,7 +548,7 @@ namespace QRdecomposition
             int rowsB = B.GetLength(0);
             int colsB = B.GetLength(1);
 
-            if (rowsA != rowsB|| colsA != colsB)
+            if (rowsA != rowsB || colsA != colsB)
             {
                 throw new InvalidOperationException("Матрицы имеют разные размерности.");
             }
@@ -547,7 +561,7 @@ namespace QRdecomposition
                 {
                     if (OperationType == '+')
                         AsumB[i, j] = A[i, j] + B[i, j];
-                    else if(OperationType == '-')
+                    else if (OperationType == '-')
                     {
                         AsumB[i, j] = A[i, j] - B[i, j];
                     }
@@ -575,7 +589,7 @@ namespace QRdecomposition
         public double[,] CreateIdentityMatrix(int size)
         {
             double[,] E = new double[size, size]; // создаем единичную матрицу
-          
+
             for (int i = 0; i < size; i++)
             {
                 for (int j = 0; j < size; j++)
@@ -678,6 +692,7 @@ namespace QRdecomposition
             SLAE slae = new SLAE(matrix1, matrix2, roundNumber);
             slae.QRdecomposition();
             slae.SLAESolution();
+            slae.determinantCalculation();
            
         }
     }
